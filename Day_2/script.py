@@ -18,10 +18,10 @@ def get_input(filepath: Path) -> str:
         data = f.read().strip()  
     return data
 
-def parse_game(line: str) -> dict:
+def parse_line(line: str) -> dict:
     """ 
     parse line '3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green'
-    into dict: {{'red': 4}, {'blue': 9}, {'green': 4}} 
+    find largest number of each color 
     return dict
     """
     game_dict = {'red': 0, 'blue': 0, 'green': 0}
@@ -29,42 +29,51 @@ def parse_game(line: str) -> dict:
         
         for round in game.strip().split(','):
             # extract number and color: add to dict
-            number, color = round.strip().split(' ')            
-            game_dict[color] += int(number)
+            number, color = round.strip().split(' ')  
+            
+            if(game_dict[color] < int(number)):
+                game_dict[color] = int(number)
 
     return game_dict
 
-def check_game(bag_dict: dict, game_dict: dict) -> bool:
-    """ compare that all colors in bag_dict are larger than game_dict """
-    for color in bag_dict.keys():
-        if(bag_dict[color] < game_dict[color]):
-            return False
-    return True
 
 def part_1(data: str) -> int:
-    """
-    1. 
-    """
     bag_dict = {'red': 12, 'green': 13, 'blue': 14}
     sum_ids = 0
     
-    for index, line in enumerate(data.strip().split('\n')):
-        game_dict = parse_game(line.split(':')[1].strip())
-        print(f"Game {index + 1}: {game_dict}")
+    for index, game in enumerate(data.strip().split('\n')):
+        # run through each game
+        game_valid = True
         
-        if(check_game(bag_dict, game_dict)):
-            sum_ids += (index + 1)
-            print("is valid")            
+        game_str = game.split(':')[1].strip()
+        
+        for game_set in game_str.split(';'):
+            # run through each game set
+            for game_set_cubes in game_set.strip().split(','):
+                # check each cube if valid
+                number, color = game_set_cubes.strip().split(' ')            
+                
+                if(bag_dict[color] < int(number)):
+                    game_valid = False
+                    break
+                
+        if(game_valid):
+            sum_ids += (index + 1)          
 
     return sum_ids
 
-def part_2(data: list) -> int:
-    """ find top 3 largest sum """
-    number_list = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-    result = 0
-    
-    # return top_3_sum
-    return result
+def part_2(data: str) -> int:
+    """
+    TEST
+    """
+    for index, game in enumerate(data.strip().split('\n')):
+        # run through each game
+        game_str = game.split(':')[1].strip()
+        
+        game_dict = parse_line(game_str)       
+        print(game_dict)
+
+    return 0
 
 if __name__ == '__main__':
     print(INPUT_FILE)
@@ -74,9 +83,9 @@ if __name__ == '__main__':
     # print(input_str)
 
     # Part 1
-    print(part_1(EXAMPLE_INPUT))
-    print(part_1(input_str))
+    #print(part_1(EXAMPLE_INPUT))
+    #print(part_1(input_str))
 
     # Part 2
-    #print(part_2(example_data2))
+    print(part_2(EXAMPLE_INPUT))
     #print(part_2(data))
